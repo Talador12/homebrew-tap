@@ -1,0 +1,36 @@
+name: Update Formula
+
+on:
+  repository_dispatch:
+    types: [formula-update]
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update aoaoe formula
+        run: |
+          VERSION="${{ github.event.client_payload.version }}"
+          VERSION="${VERSION#v}"  # strip leading v
+
+          # fetch tarball and compute sha256
+          URL="https://registry.npmjs.org/aoaoe/-/aoaoe-${VERSION}.tgz"
+          SHA=$(curl -fsSL "$URL" | sha256sum | awk '{print $1}')
+
+          # update formula
+          sed -i "s|url \".*\"|url \"${URL}\"|" Formula/aoaoe.rb
+          sed -i "s|sha256 \".*\"|sha256 \"${SHA}\"|" Formula/aoaoe.rb
+
+      - name: Commit and push
+        run: |
+          VERSION="${{ github.event.client_payload.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Formula/aoaoe.rb
+          git commit -m "aoaoe ${VERSION}" || exit 0
+          git push
