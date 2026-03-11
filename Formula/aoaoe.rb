@@ -1,8 +1,8 @@
 class Aoaoe < Formula
   desc "Autonomous supervisor for agent-of-empires sessions"
   homepage "https://github.com/Talador12/agent-of-agent-of-empires"
-  url "https://registry.npmjs.org/aoaoe/-/aoaoe-0.49.0.tgz"
-  sha256 "56bac6847778ecd227c00713a3805c0d55f35e19a5ce0487bde3c6e456e1313e" # updated automatically by CI
+  url "https://registry.npmjs.org/aoaoe/-/aoaoe-0.50.0.tgz"
+  sha256 "cce90e7df6355e25565c1d29bbc5f231f8025c0ad150d6ef7ffaefc90163ab85" # updated automatically by CI
   license "MIT"
 
   depends_on "node@22"
