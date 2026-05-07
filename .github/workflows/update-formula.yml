@@ -15,14 +15,17 @@ jobs:
 
       - name: Update aoaoe formula
         run: |
+          set -euo pipefail
           VERSION="${{ github.event.client_payload.version }}"
-          VERSION="${VERSION#v}"  # strip leading v
+          VERSION="${VERSION#v}"
 
-          # fetch tarball and compute sha256
           URL="https://registry.npmjs.org/aoaoe/-/aoaoe-${VERSION}.tgz"
-          SHA=$(curl -fsSL "$URL" | sha256sum | awk '{print $1}')
+          TARBALL="$(mktemp)"
+          curl -fsSL "$URL" -o "$TARBALL"
+          test -s "$TARBALL"
+          SHA=$(sha256sum "$TARBALL" | awk '{print $1}')
+          rm -f "$TARBALL"
 
-          # update formula
           sed -i "s|url \".*\"|url \"${URL}\"|" Formula/aoaoe.rb
           sed -i "s|sha256 \".*\"|sha256 \"${SHA}\"|" Formula/aoaoe.rb
 
